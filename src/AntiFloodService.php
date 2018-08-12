@@ -15,13 +15,12 @@ class AntiFloodService
     public function detectAntiFlood()
     {
 
-        if (!empty($_SESSION['antiFlood'])) {
-            $time = time() - $_SESSION['antiFlood'];
+        if (!empty($_SESSION['dtb.antiFlood'])) {
+            $time = time() - $_SESSION['dtb.antiFlood'];
             if ($time < $this->getAntiFloodDelay()) {
                 $this->setAntiFlood();
             } else {
                 if ($time >= $this->getAntiFloodDelay()) {
-                    $this->setAntiFlood();
                     $this->removeAntiFlood();
                 }
             }
@@ -37,7 +36,8 @@ class AntiFloodService
 
     public function removeAntiFlood()
     {
-        unset($_SESSION['antiFlood']);
+        unset($_SESSION['dtb.antiFlood']);
+        $this->antiFlood = false;
     }
 
     public function getAntiFlood()
@@ -47,8 +47,8 @@ class AntiFloodService
 
     public function setAntiFlood()
     {
-        if (empty($_SESSION['antiFlood'])) {
-            $_SESSION['antiFlood'] = time();
+        if (empty($_SESSION['dtb.antiFlood'])) {
+            $_SESSION['dtb.antiFlood'] = time();
         }
         $this->antiFlood = true;
         return;
