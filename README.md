@@ -34,7 +34,7 @@ require 'vendor/autoload.php';
 ```sh
 use devtoolboxuk/antiflood;
 
-$this->antiFloodService = new AntiFloodService();
+$this->antiFloodService = new AntiFloodService('_default',60);
 ```
 
 

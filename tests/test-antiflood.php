@@ -12,38 +12,45 @@ class AntiFlood extends TestCase
     function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
+
         $this->antiFloodService = new AntiFloodService();
+    }
+
+    public function testAntiFloodNameSpace()
+    {
+        $this->assertEquals('antiflood._default', $this->antiFloodService->getAntiFloodNameSpace());
+        $this->antiFloodService->setAntiFloodNameSpace('test');
+        $this->assertNotEquals('antiflood._default', $this->antiFloodService->getAntiFloodNameSpace());
+        $this->assertEquals('antiflood.test', $this->antiFloodService->getAntiFloodNameSpace());
+
+        $this->antiFloodService->setAntiFloodNameSpace('test1');
+        $this->assertNotEquals('antiflood.test', $this->antiFloodService->getAntiFloodNameSpace());
+        $this->assertEquals('antiflood.test1', $this->antiFloodService->getAntiFloodNameSpace());
+
     }
 
     public function testAntiFloodDelay()
     {
-        //Get AntiFloodDelay
-        $this->assertEquals('60', $this->antiFloodService->getAntiFloodDelay());
 
-        //Set AntiFlood Delay
-        $this->antiFloodService->setAntiFloodDelay('300');
-        $this->assertEquals('300', $this->antiFloodService->getAntiFloodDelay());
-        $this->assertNotEquals('60', $this->antiFloodService->getAntiFloodDelay());
+        $this->antiFloodService->setAntiFloodNameSpace('unittest');
+        $this->assertEquals(60, $this->antiFloodService->getAntiFloodDelay());
+        $this->antiFloodService->setAntiFloodDelay(3);
+        $this->assertEquals(3, $this->antiFloodService->getAntiFloodDelay());
 
     }
 
     public function testAntiFlood()
     {
-        $this->antiFloodService->setAntiFloodDelay('1');
-        $this->antiFloodService->setAntiFlood();
+        $this->antiFloodService->setAntiFloodNameSpace('unittest');
+        $this->antiFloodService->setAntiFloodDelay(3);
+        $this->assertFalse($this->antiFloodService->detectAntiFlood());
 
-        $this->assertSame(true, $this->antiFloodService->detectAntiFlood());
+        sleep(2);
+        $this->assertTrue($this->antiFloodService->detectAntiFlood());
+
+
         sleep(3);
-        $this->assertSame(false, $this->antiFloodService->detectAntiFlood());
-
-
-        $this->antiFloodService->setAntiFloodDelay('2');
-        $this->antiFloodService->setAntiFlood();
-
-        $this->assertSame(true, $this->antiFloodService->detectAntiFlood());
-        sleep(1);
-        $this->assertNotSame(false, $this->antiFloodService->detectAntiFlood());
-
+        $this->assertFalse($this->antiFloodService->detectAntiFlood());
     }
 
 }

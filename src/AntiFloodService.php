@@ -2,55 +2,96 @@
 
 namespace devtoolboxuk\antiflood;
 
-class AntiFloodService
+use devtoolboxuk\antiflood\Storage\SessionStorage;
+
+class AntiFloodService implements AntiFloodInterface
 {
-    protected $antiFlood = false;
-    protected $delay = 60;
+    const ANTIFLOOD_NAMESPACE = '_default';
+    const ANTIFLOOD_DELAY = 60;
+
+    protected $storage;
+    protected $delay;
+    protected $namespace;
+
+    public function __construct($namespace = self::ANTIFLOOD_NAMESPACE, $delay = self::ANTIFLOOD_DELAY, StorageInterface $storage = null)
+    {
+        $this->storage = $storage ? '' : new SessionStorage();
+        $this->init($namespace, $delay);
+
+    }
+
+    public function setAntiFloodNameSpace($namespace)
+    {
+        $this->storage->storeNameSpace($namespace);
+    }
+
+    public function getAntiFloodNameSpace() {
+        return $this->storage->getNameSpace();
+    }
+
+    private function init($namespace, $delay)
+    {
+        $this->storage->storeNameSpace($namespace);
+        $this->setAntiFloodDelay($delay);
+    }
 
     public function setAntiFloodDelay($delay)
     {
-        $this->delay = $delay;
+        $this->storage->storeDelay($delay);
     }
 
     public function detectAntiFlood()
     {
 
-        if (!empty($_SESSION['dtb.antiFlood'])) {
-            $time = time() - $_SESSION['dtb.antiFlood'];
-            if ($time < $this->getAntiFloodDelay()) {
-                $this->setAntiFlood();
+        if (!$this->hasAntiFloodTime()) {
+            $this->setAntiFloodTime();
+        } else {
+            if ($this->antiFloodInOperation()) {
+                $this->setAntiFloodTime();
+                return true;
             } else {
-                if ($time >= $this->getAntiFloodDelay()) {
-                    $this->removeAntiFlood();
-                }
+                $this->removeAntiFlood();
             }
         }
+        return false;
+    }
 
-        return $this->getAntiFlood();
+    private function hasAntiFloodTime()
+    {
+        return $this->storage->hasTime();
+    }
+
+    private function setAntiFloodTime()
+    {
+        $this->storage->storeTime();
+    }
+
+    private function antiFloodInOperation()
+    {
+        return $this->timeDifference() < $this->getAntiFloodDelay();
+    }
+
+    private function timeDifference()
+    {
+        return time() - $this->getAntiFloodTime();
+    }
+
+    public function getAntiFloodTime()
+    {
+        return $this->storage->getTime();
     }
 
     public function getAntiFloodDelay()
     {
-        return $this->delay;
+
+        return $this->storage->getDelay();
+
     }
 
-    public function removeAntiFlood()
+    private function removeAntiFlood()
     {
-        unset($_SESSION['dtb.antiFlood']);
-        $this->antiFlood = false;
+        $this->storage->clear();
     }
 
-    public function getAntiFlood()
-    {
-        return $this->antiFlood;
-    }
 
-    public function setAntiFlood()
-    {
-        if (empty($_SESSION['dtb.antiFlood'])) {
-            $_SESSION['dtb.antiFlood'] = time();
-        }
-        $this->antiFlood = true;
-        return;
-    }
 }
