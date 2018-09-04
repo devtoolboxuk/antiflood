@@ -1,6 +1,6 @@
 <?php
 
-namespace devtoolboxuk\antiflood;
+namespace Devtoolboxuk\antiflood;
 
 use PHPUnit\Framework\TestCase;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace devtoolboxuk\antiflood;
+namespace Devtoolboxuk\antiflood;
 
-use devtoolboxuk\antiflood\Storage\SessionStorage;
+use Devtoolboxuk\antiflood\Storage\SessionStorage;
 
 class AntiFloodService implements AntiFloodInterface
 {

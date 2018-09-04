@@ -1,6 +1,6 @@
 <?php
 
-namespace devtoolboxuk\antiflood\Storage;
+namespace Devtoolboxuk\antiflood\Storage;
 
 
 class SessionStorage implements StorageInterface
