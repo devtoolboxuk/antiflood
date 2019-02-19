@@ -22,7 +22,7 @@ Can be used to prevent multiple submissions of forms. But to be used along side 
 Usage of the hashing service
 
 ```sh
-$ composer require devtoolboxuk/anitflood
+$ composer require devtoolboxuk/antiflood
 ```
 
 Then include Composer's generated vendor/autoload.php to enable autoloading:
