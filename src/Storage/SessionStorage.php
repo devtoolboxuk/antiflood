@@ -11,14 +11,33 @@ class SessionStorage implements StorageInterface
     const SESSION_NAMESPACE = 'antiflood';
     const SESSION_DELAY = 60;
 
-    private $session;
+    private $storage;
     private $namespace;
 
     public function storeNameSpace($namespace)
     {
+        $this->namespace = self::SESSION_NAMESPACE . "_" . $namespace;
+        $this->storage = $_SESSION[$this->namespace];
+    }
 
-        $this->namespace = self::SESSION_NAMESPACE .".". $namespace;
-        $this->session = $_SESSION[$this->namespace] = [];
+    public function getStorage()
+    {
+        return $this->storage;
+    }
+
+    protected function setStorageItem($key, $value)
+    {
+        $this->storage[$key] = $value;
+        $_SESSION[$this->namespace] = $this->storage;
+    }
+
+    protected function getStorageItem($key)
+    {
+        $this->storage = $_SESSION[$this->namespace];
+        if (isset($this->storage[$key])) {
+            return $this->storage[$key];
+        }
+        return null;
     }
 
     public function getNameSpace()
@@ -28,32 +47,29 @@ class SessionStorage implements StorageInterface
 
     public function storeTime()
     {
-        $this->session['time'] = time();
+        $this->setStorageItem('time',time());
     }
 
     public function getTime()
     {
-        return isset($this->session['time']) ? $this->session['time'] : 0;
-    }
-
-    public function hasTime()
-    {
-        return isset($this->session['time']) ? true : false;
+        return $this->getStorageItem('time');
     }
 
     public function storeDelay($delay)
     {
-        $this->session['delay'] = (int)$delay;
+        $this->setStorageItem('delay',(int)$delay);
     }
 
     public function getDelay()
     {
-        return isset($this->session['delay']) ? $this->session['delay'] : self::SESSION_DELAY;
-
+        if ($this->getStorageItem('delay')) {
+            return $this->getStorageItem('delay');
+        }
+        return self::SESSION_DELAY;
     }
 
     public function clear()
     {
-        unset($this->session);
+        unset($_SESSION[$this->namespace]);
     }
 }

@@ -16,34 +16,18 @@ class AntiFloodService implements AntiFloodInterface
     public function __construct($namespace = self::ANTIFLOOD_NAMESPACE, $delay = self::ANTIFLOOD_DELAY, StorageInterface $storage = null)
     {
         $this->storage = $storage ? '' : new SessionStorage();
-        $this->init($namespace, $delay);
-
-    }
-
-    public function setAntiFloodNameSpace($namespace)
-    {
         $this->storage->storeNameSpace($namespace);
-    }
-
-    public function getAntiFloodNameSpace() {
-        return $this->storage->getNameSpace();
-    }
-
-    private function init($namespace, $delay)
-    {
-        $this->storage->storeNameSpace($namespace);
-        $this->setAntiFloodDelay($delay);
-    }
-
-    public function setAntiFloodDelay($delay)
-    {
         $this->storage->storeDelay($delay);
+    }
+
+    public function getAntiFloodNameSpace()
+    {
+        return $this->storage->getNameSpace();
     }
 
     public function detectAntiFlood()
     {
-
-        if (!$this->hasAntiFloodTime()) {
+        if (!$this->getAntiFloodTime()) {
             $this->setAntiFloodTime();
         } else {
             if ($this->antiFloodInOperation()) {
@@ -54,11 +38,6 @@ class AntiFloodService implements AntiFloodInterface
             }
         }
         return false;
-    }
-
-    private function hasAntiFloodTime()
-    {
-        return $this->storage->hasTime();
     }
 
     private function setAntiFloodTime()
@@ -83,15 +62,16 @@ class AntiFloodService implements AntiFloodInterface
 
     public function getAntiFloodDelay()
     {
-
         return $this->storage->getDelay();
+    }
 
+    public function getStorage()
+    {
+        return $this->storage->getStorage();
     }
 
     private function removeAntiFlood()
     {
         $this->storage->clear();
     }
-
-
 }

@@ -10,4 +10,8 @@ interface AntiFloodInterface
 
     public function getAntiFloodDelay();
 
+    public function getAntiFloodNameSpace();
+
+    public function getStorage();
+
 }
