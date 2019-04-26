@@ -14,11 +14,6 @@ class SessionStorage implements StorageInterface
     private $storage;
     private $namespace;
 
-    function __construct()
-    {
-        session_start();
-    }
-
     public function storeNameSpace($namespace)
     {
         $this->namespace = self::SESSION_NAMESPACE . "." . $namespace;
